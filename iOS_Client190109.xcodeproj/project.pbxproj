@@ -8,18 +8,19 @@
 
 /* Begin PBXBuildFile section */
 		73D8B84AA5B04F87DA0E2CF0 /* Pods_iOS_Client190109.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ED4D713ACD6B3EE5348EFDE6 /* Pods_iOS_Client190109.framework */; };
+		EA38B59621E8EAD200884AEA /* KeyCenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA38B59521E8EAD200884AEA /* KeyCenter.swift */; };
 		EA83EFB821E6180800DBE47B /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA83EFB721E6180800DBE47B /* AppDelegate.swift */; };
 		EA83EFBA21E6180800DBE47B /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA83EFB921E6180800DBE47B /* ViewController.swift */; };
 		EA83EFBD21E6180800DBE47B /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = EA83EFBB21E6180800DBE47B /* Main.storyboard */; };
 		EA83EFC021E6180800DBE47B /* iOS_Client190109.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = EA83EFBE21E6180800DBE47B /* iOS_Client190109.xcdatamodeld */; };
 		EA83EFC221E6180A00DBE47B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = EA83EFC121E6180A00DBE47B /* Assets.xcassets */; };
 		EA83EFC521E6180A00DBE47B /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = EA83EFC321E6180A00DBE47B /* LaunchScreen.storyboard */; };
-		EABCB6D221E8DFE900142E99 /* KeyCenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = EABCB6D121E8DFE900142E99 /* KeyCenter.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		702DACDBB6C0FDC12442847C /* Pods-iOS_Client190109.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-iOS_Client190109.debug.xcconfig"; path = "Pods/Target Support Files/Pods-iOS_Client190109/Pods-iOS_Client190109.debug.xcconfig"; sourceTree = "<group>"; };
 		9AE5C711F9960790D1979A82 /* Pods-iOS_Client190109.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-iOS_Client190109.release.xcconfig"; path = "Pods/Target Support Files/Pods-iOS_Client190109/Pods-iOS_Client190109.release.xcconfig"; sourceTree = "<group>"; };
+		EA38B59521E8EAD200884AEA /* KeyCenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = KeyCenter.swift; path = iOS_Client190109/KeyCenter.swift; sourceTree = SOURCE_ROOT; };
 		EA83EFB421E6180800DBE47B /* iOS_Client190109.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = iOS_Client190109.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		EA83EFB721E6180800DBE47B /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		EA83EFB921E6180800DBE47B /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -28,7 +29,6 @@
 		EA83EFC121E6180A00DBE47B /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		EA83EFC421E6180A00DBE47B /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		EA83EFC621E6180A00DBE47B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		EABCB6D121E8DFE900142E99 /* KeyCenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyCenter.swift; sourceTree = "<group>"; };
 		ED4D713ACD6B3EE5348EFDE6 /* Pods_iOS_Client190109.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_iOS_Client190109.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -51,6 +51,14 @@
 				9AE5C711F9960790D1979A82 /* Pods-iOS_Client190109.release.xcconfig */,
 			);
 			name = Pods;
+			sourceTree = "<group>";
+		};
+		EA38B59721E8EB5600884AEA /* Presets */ = {
+			isa = PBXGroup;
+			children = (
+				EA38B59521E8EAD200884AEA /* KeyCenter.swift */,
+			);
+			name = Presets;
 			sourceTree = "<group>";
 		};
 		EA83EFAB21E6180800DBE47B = {
@@ -76,7 +84,7 @@
 			children = (
 				EA83EFB721E6180800DBE47B /* AppDelegate.swift */,
 				EA83EFB921E6180800DBE47B /* ViewController.swift */,
-				EABCB6D321E8DFEC00142E99 /* Presets */,
+				EA38B59721E8EB5600884AEA /* Presets */,
 				EA83EFBB21E6180800DBE47B /* Main.storyboard */,
 				EA83EFC121E6180A00DBE47B /* Assets.xcassets */,
 				EA83EFC321E6180A00DBE47B /* LaunchScreen.storyboard */,
@@ -84,14 +92,6 @@
 				EA83EFBE21E6180800DBE47B /* iOS_Client190109.xcdatamodeld */,
 			);
 			path = iOS_Client190109;
-			sourceTree = "<group>";
-		};
-		EABCB6D321E8DFEC00142E99 /* Presets */ = {
-			isa = PBXGroup;
-			children = (
-				EABCB6D121E8DFE900142E99 /* KeyCenter.swift */,
-			);
-			path = Presets;
 			sourceTree = "<group>";
 		};
 		FBD199D40B0DCB23536647A7 /* Frameworks */ = {
@@ -195,7 +195,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				EABCB6D221E8DFE900142E99 /* KeyCenter.swift in Sources */,
+				EA38B59621E8EAD200884AEA /* KeyCenter.swift in Sources */,
 				EA83EFC021E6180800DBE47B /* iOS_Client190109.xcdatamodeld in Sources */,
 				EA83EFBA21E6180800DBE47B /* ViewController.swift in Sources */,
 				EA83EFB821E6180800DBE47B /* AppDelegate.swift in Sources */,
