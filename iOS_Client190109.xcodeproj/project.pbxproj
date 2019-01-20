@@ -127,6 +127,7 @@
 				EA83EFB021E6180800DBE47B /* Sources */,
 				EA83EFB121E6180800DBE47B /* Frameworks */,
 				EA83EFB221E6180800DBE47B /* Resources */,
+				098FA9242FA5FF4207BD3E1F /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -184,6 +185,24 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		098FA9242FA5FF4207BD3E1F /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${SRCROOT}/Pods/Target Support Files/Pods-iOS_Client190109/Pods-iOS_Client190109-frameworks.sh",
+				"${BUILT_PRODUCTS_DIR}/Alamofire/Alamofire.framework",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Alamofire.framework",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-iOS_Client190109/Pods-iOS_Client190109-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
 		38CEBB93A939F346ADDA2CB2 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;

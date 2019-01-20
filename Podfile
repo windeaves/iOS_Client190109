@@ -8,5 +8,6 @@ target 'iOS_Client190109' do
   # Pods for iOS_Client190109
 
 pod 'AgoraRtcEngine_iOS'
+pod 'Alamofire'
 
 end

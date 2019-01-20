@@ -7,8 +7,11 @@
 //
 
 import UIKit
+import Alamofire
 
-class LoginViewController: UIViewController {
+class LoginViewController: UIViewController, UITextFieldDelegate {
+    
+    var telNum: String = ""
     
     let profileImgView: UIImageView = {
         let imgView = UIImageView()
@@ -43,6 +46,14 @@ class LoginViewController: UIViewController {
     
     @objc func handleRegister() {
         //Just for Testing
+        telNum = telTextField.text ?? ""
+        print(KeyCenter.RegisterUrl + telNum)
+        
+        Alamofire.request(KeyCenter.RegisterUrl + telNum)
+            .responseJSON { response in
+                debugPrint(response)
+        }
+        
         let storyBoard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
         let newViewController = storyBoard.instantiateViewController(withIdentifier: "mainPageVC") as! ViewController
         self.present(newViewController, animated: true, completion: nil)
@@ -62,21 +73,21 @@ class LoginViewController: UIViewController {
         return view
     }()
     
-    let emailTextField: UITextField = {
+    let telTextField: UITextField = {
         let textField = UITextField()
-        textField.placeholder = "Email"
+        textField.placeholder = "Telephone Number"
         textField.translatesAutoresizingMaskIntoConstraints = false
         return textField
     }()
     
-    let emailSeparatorView: UIView = {
+    let telSeparatorView: UIView = {
         let view = UIView()
         view.backgroundColor = UIColor(r: 220, g: 220, b: 220)
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
     
-    let passwTextField: UITextField = {
+    var passwTextField: UITextField = {
         let textField = UITextField()
         textField.placeholder = "Password"
         textField.isSecureTextEntry = true
@@ -97,6 +108,43 @@ class LoginViewController: UIViewController {
         setupLogInRegisterButton()
         setupProfileImgView()
         
+        // MARK: - Setup "return" key on keyboard for each TF
+        nameTextField.delegate = self
+        telTextField.delegate = self
+        passwTextField.delegate = self
+        nameTextField.returnKeyType = UIReturnKeyType.next
+        telTextField.returnKeyType = UIReturnKeyType.next
+        // Dismiss Keyboard using "return" key on keyboard.
+        passwTextField.returnKeyType = UIReturnKeyType.done // Last input TF should be here!!!
+        
+        let tapToDismissKeyboard = UITapGestureRecognizer(target: self, action:#selector(dismissKeyboard))
+        tapToDismissKeyboard.cancelsTouchesInView = false
+        view.addGestureRecognizer(tapToDismissKeyboard)
+        
+    }
+    
+    // MARK: UITextFieldDelegate
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        switch textField {
+            case nameTextField:
+                telTextField.becomeFirstResponder()
+            case telTextField:
+                passwTextField.becomeFirstResponder()
+            case passwTextField:
+                passwTextField.resignFirstResponder()
+            default:
+                textField.resignFirstResponder()
+        }
+        return false
+    }
+    
+    @objc func dismissKeyboard (_ sender: UITapGestureRecognizer) {
+        nameTextField.resignFirstResponder()
+        telTextField.resignFirstResponder()
+        passwTextField.resignFirstResponder()
+        UIView.animate(withDuration: 0.3) {
+            self.view.layoutIfNeeded()
+        }
     }
     
     func setupProfileImgView() {
@@ -117,8 +165,8 @@ class LoginViewController: UIViewController {
         //Input Fields
         inputsContainerView.addSubview(nameTextField)
         inputsContainerView.addSubview(nameSeparatorView)
-        inputsContainerView.addSubview(emailTextField)
-        inputsContainerView.addSubview(emailSeparatorView)
+        inputsContainerView.addSubview(telTextField)
+        inputsContainerView.addSubview(telSeparatorView)
         inputsContainerView.addSubview(passwTextField)
         
         //Constraints for nameTextField
@@ -133,21 +181,21 @@ class LoginViewController: UIViewController {
         nameSeparatorView.widthAnchor.constraint(equalTo: inputsContainerView.widthAnchor, constant: -20).isActive = true
         nameSeparatorView.heightAnchor.constraint(equalToConstant: 1).isActive = true
         
-        //Constraints for emailTextField
-        emailTextField.leftAnchor.constraint(equalTo: inputsContainerView.leftAnchor, constant: 16).isActive = true
-        emailTextField.topAnchor.constraint(equalTo: nameSeparatorView.bottomAnchor).isActive = true
-        emailTextField.widthAnchor.constraint(equalTo: inputsContainerView.widthAnchor).isActive = true
-        emailTextField.heightAnchor.constraint(equalTo: inputsContainerView.heightAnchor, multiplier: 1/3).isActive = true
+        //Constraints for telTextField
+        telTextField.leftAnchor.constraint(equalTo: inputsContainerView.leftAnchor, constant: 16).isActive = true
+        telTextField.topAnchor.constraint(equalTo: nameSeparatorView.bottomAnchor).isActive = true
+        telTextField.widthAnchor.constraint(equalTo: inputsContainerView.widthAnchor).isActive = true
+        telTextField.heightAnchor.constraint(equalTo: inputsContainerView.heightAnchor, multiplier: 1/3).isActive = true
         
         //Constraints for emailSeparatorView
-        emailSeparatorView.leftAnchor.constraint(equalTo: inputsContainerView.leftAnchor, constant: 10).isActive = true
-        emailSeparatorView.topAnchor.constraint(equalTo: emailTextField.bottomAnchor).isActive = true
-        emailSeparatorView.widthAnchor.constraint(equalTo: inputsContainerView.widthAnchor, constant: -20).isActive = true
-        emailSeparatorView.heightAnchor.constraint(equalToConstant: 1).isActive = true
+        telSeparatorView.leftAnchor.constraint(equalTo: inputsContainerView.leftAnchor, constant: 10).isActive = true
+        telSeparatorView.topAnchor.constraint(equalTo: telTextField.bottomAnchor).isActive = true
+        telSeparatorView.widthAnchor.constraint(equalTo: inputsContainerView.widthAnchor, constant: -20).isActive = true
+        telSeparatorView.heightAnchor.constraint(equalToConstant: 1).isActive = true
         
         //Constraints for passwTextField
         passwTextField.leftAnchor.constraint(equalTo: inputsContainerView.leftAnchor, constant: 16).isActive = true
-        passwTextField.topAnchor.constraint(equalTo: emailSeparatorView.bottomAnchor).isActive = true
+        passwTextField.topAnchor.constraint(equalTo: telSeparatorView.bottomAnchor).isActive = true
         passwTextField.widthAnchor.constraint(equalTo: inputsContainerView.widthAnchor).isActive = true
         passwTextField.heightAnchor.constraint(equalTo: inputsContainerView.heightAnchor, multiplier: 1/3).isActive = true
     }
@@ -164,7 +212,8 @@ class LoginViewController: UIViewController {
     override var preferredStatusBarStyle: UIStatusBarStyle {
         return .lightContent
     }
-
+    
+    
 }
 
 extension UIColor {
