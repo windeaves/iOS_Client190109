@@ -91,5 +91,8 @@ extension UIColor {
         
         static let darkGreen: UIColor = .init(hex: 0x026838)
         static let RRed: UIColor = .init(hex: 0xbf1e2e)
+        
+        //Project-based Colorpad
+        static let TianyiBlue: UIColor = .init(hex: 0x66ccff)
     }
 }

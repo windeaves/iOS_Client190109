@@ -13,6 +13,13 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
     
     var telNum: String = ""
     
+    //MARK: Setup Haptic Feedback
+    let hapticImpactLight  = UIImpactFeedbackGenerator(style: .light)
+    let hapticImpactMedium = UIImpactFeedbackGenerator(style: .medium)
+    let hapticImpactHeavy  = UIImpactFeedbackGenerator(style: .heavy)
+    let hapticSelection    = UISelectionFeedbackGenerator()
+    let hapticNotification = UINotificationFeedbackGenerator()
+    
     let profileImgView: UIImageView = {
         let imgView = UIImageView()
         imgView.image = UIImage(named: "Log_pic.jpg")
@@ -31,29 +38,49 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
     }()
     
     let logInRegisterButton: UIButton = {
-        let button = UIButton(type:.system)
-        button.backgroundColor = UIColor(r: 80, g: 101, b: 161)
-        button.setTitle("R E G I S T E R", for:.normal)
+        let button = UIButton(type: .system)
+        button.backgroundColor = UIColor.black.withAlphaComponent(0.5)
+        button.setTitle("R E G I S T E R", for: .normal)
         button.setTitleColor(UIColor.white, for: .normal)
         button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 16)
         button.translatesAutoresizingMaskIntoConstraints = false
         button.layer.cornerRadius = 12
         button.layer.masksToBounds = true
         
+        button.addTarget(self, action: #selector(handleTouchDown), for: .touchDown)
         button.addTarget(self, action: #selector(handleRegister), for: .touchUpInside)
+        
         return button
     }()
     
+    @objc func handleTouchDown() {
+        // Feedback
+        hapticImpactLight.impactOccurred()
+//        // Animation
+//        UIView.animate(withDuration: 0.1, animations: {
+//            self.logInRegisterButton.backgroundColor = self.logInRegisterButton.backgroundColor?.withAlphaComponent(0.5)
+//            self.logInRegisterButton.transform = CGAffineTransform(scaleX: 0.95, y: 0.98)
+//        })
+    }
+
     @objc func handleRegister() {
-        //Just for Testing
-        telNum = telTextField.text ?? ""
-        print(KeyCenter.RegisterUrl + telNum)
+        // Feedback
+        hapticImpactLight.impactOccurred()
         
+        //        // Animation
+        //        UIView.animate(withDuration: 0.13, animations: {
+        //            self.logInRegisterButton.backgroundColor = self.logInRegisterButton.backgroundColor?.withAlphaComponent(0.3)
+        //            self.logInRegisterButton.transform = CGAffineTransform(scaleX: 1.0, y: 1.0)
+        //        })
+        
+        // Registration func
+        telNum = telTextField.text ?? ""
         Alamofire.request(KeyCenter.RegisterUrl + telNum)
             .responseJSON { response in
                 debugPrint(response)
         }
         
+        // Present mainPageVC
         let storyBoard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
         let newViewController = storyBoard.instantiateViewController(withIdentifier: "mainPageVC") as! ViewController
         self.present(newViewController, animated: true, completion: nil)
@@ -98,7 +125,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        view.backgroundColor = UIColor(r: 61, g: 91, b: 151)
+        view.backgroundColor = UIColor.InterfaceColor.TianyiBlue
         
         view.addSubview(inputsContainerView)
         view.addSubview(logInRegisterButton)
@@ -203,9 +230,9 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
     func setupLogInRegisterButton() {
         //Constraints
         logInRegisterButton.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
-        logInRegisterButton.topAnchor.constraint(equalTo: inputsContainerView.bottomAnchor, constant: 24).isActive = true
+        logInRegisterButton.topAnchor.constraint(equalTo: inputsContainerView.bottomAnchor, constant: 36).isActive = true
         logInRegisterButton.widthAnchor.constraint(equalTo: inputsContainerView.widthAnchor).isActive = true
-        logInRegisterButton.heightAnchor.constraint(equalToConstant: 48).isActive = true
+        logInRegisterButton.heightAnchor.constraint(equalToConstant: 54).isActive = true
     }
     
     //Status Bar Style
