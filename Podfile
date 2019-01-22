@@ -9,5 +9,6 @@ target 'iOS_Client190109' do
 
 pod 'AgoraRtcEngine_iOS'
 pod 'Alamofire'
+pod 'CryptoSwift'
 
 end
