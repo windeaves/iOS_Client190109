@@ -381,9 +381,14 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
         logInRegisterButton.heightAnchor.constraint(equalToConstant: 56).isActive = true
     }
     
-    // MARK: - Status Bar Style
+    // MARK: - VC Settings
+    // MARK: Status Bar Style
     override var preferredStatusBarStyle: UIStatusBarStyle {
         return .default
+    }
+    // MARK: Rotation Disabled
+    override var shouldAutorotate: Bool {
+        return false
     }
     
 }
