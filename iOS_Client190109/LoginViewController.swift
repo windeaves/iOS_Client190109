@@ -234,18 +234,10 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
     // MARK: - Functions
     // MARK: Registration info Encryption
     func hashSaltAndPassw() {
-        let passw: Array<UInt8> = Array(passwTextField.text!.utf8)
-        let salt: Array<UInt8> = Array(self.salt.utf8)
-        let key = try! HKDF(password: passw, salt: salt, variant: .md5).calculate()
-        var digestHex = ""
-        for index in 0..<Int(key.count) {
-            digestHex += String(format: "%02x", key[index])
-        }
-        print(self.passwTextField.text!)
-        print(passw)
-        print(key.count)
-        print(key)
-        print(digestHex)
+        let passwWithSalt = self.passwTextField.text! + salt
+        print(passwWithSalt)
+        hashed = passwWithSalt.md5()
+        print(hashed)
     }
     
     // MARK: Input info Validation
@@ -294,10 +286,6 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
         profileImgView.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
         profileImgView.bottomAnchor.constraint(equalTo: inputsContainerView.topAnchor, constant: -60).isActive = true
         profileImgView.topAnchor.constraint(equalTo: inputsContainerView.topAnchor, constant: -100).isActive = true
-//        profileImgView.widthAnchor.constraint(equalToConstant: 200).isActive = true
-//        profileImgView.leftAnchor.constraint(equalTo: view.centerXAnchor, constant: -100).isActive = true
-//        profileImgView.rightAnchor.constraint(equalTo: view.centerXAnchor, constant: 100).isActive = true
-//        profileImgView.heightAnchor.constraint(equalToConstant: 80).isActive = true
     }
     
     func setupInputsContainerView() {
