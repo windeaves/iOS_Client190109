@@ -79,40 +79,48 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
         
         // MARK: Registration
         if (inputInfoValidation()) {
+            // Disable User Interaction
+            view.isUserInteractionEnabled = false
             
-            Alamofire.request(KeyCenter.RegisterUrl + telTextField.text!)
+            let register1Request = KeyCenter.Register1Url + telTextField.text!
+            Alamofire.request(register1Request)
                 .responseJSON { response in
 //                    debugPrint(response)
-                    // Get status code
-                    if let status = response.response?.statusCode {
-                        switch(status){
-                        case 200:
-                            print("Registration \(response.result)")
-                        default:
-                            print("error with response status: \(status)")
-                        }
-                    }
+//                    // Get status code
+//                    if let status = response.response?.statusCode {
+//                        switch(status){
+//                        case 200:
+//                            print("Registration \(response.result)")
+//                        default:
+//                            print("error with response status: \(status)")
+//                        }
+//                    }
                     
                     // MARK: Get salt from response
                     if let result = response.result.value {
-                        let JSON = result as! NSDictionary
-                        print(JSON)
-                        guard let content = JSON["content"] as? [String: Any],
+                        let responseJSON = result as! NSDictionary
+//                        print(responseJSON)
+                        guard let content = responseJSON["content"] as? [String: Any],
                             let salt = content["salt"] as? String else {
-                                print("Failed to parse JSON")
+                                print("Parsing JSON FAILED")
                                 return
                         }
                         self.salt = salt
                         print("salt from Server: \(self.salt)")
                         self.hashSaltAndPassw()
+                        let register2Part1 = KeyCenter.Register2Url + "?tel=" + self.telTextField.text!
+                        let register2Request = register2Part1 + "mail=" + self.emailTextField.text! + "passsalt=" + self.hashed
+                        print(register2Request)
+                        Alamofire.request(register2Request).response { response in
+                            debugPrint(response)
+                        }
                     }
             }
             
-            // Transition to mainPageVC
-            let storyBoard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
-            let newViewController = storyBoard.instantiateViewController(withIdentifier: "mainPageVC") as! ViewController
-            self.present(newViewController, animated: true, completion: nil)
-            
+//            // Transition to mainPageVC
+//            let storyBoard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
+//            let newViewController = storyBoard.instantiateViewController(withIdentifier: "mainPageVC") as! ViewController
+//            self.present(newViewController, animated: true, completion: nil)
         } else {
             // Validation
             print("Input Validation FAILED.\nPlease recheck your input and try again.")
@@ -120,19 +128,19 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
         
     }
     
-    let nameTextField: UITextField = {
-        let textField = UITextField()
-        textField.placeholder = "Your Name"
-        textField.translatesAutoresizingMaskIntoConstraints = false
-        return textField
-    }()
+//    let nameTextField: UITextField = {
+//        let textField = UITextField()
+//        textField.placeholder = "Your Name"
+//        textField.translatesAutoresizingMaskIntoConstraints = false
+//        return textField
+//    }()
     
-    let nameSeparatorView: UIView = {
-        let view = UIView()
-        view.backgroundColor = UIColor.InterfaceColor.lightGray
-        view.translatesAutoresizingMaskIntoConstraints = false
-        return view
-    }()
+//    let nameSeparatorView: UIView = {
+//        let view = UIView()
+//        view.backgroundColor = UIColor.InterfaceColor.lightGray
+//        view.translatesAutoresizingMaskIntoConstraints = false
+//        return view
+//    }()
     
     let telTextField: UITextField = {
         let textField = UITextField()
@@ -185,6 +193,11 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
         return textField
     }()
     
+    override func viewWillAppear(_ animated: Bool) {
+        AppDelegate.AppUtility.lockOrientation(UIInterfaceOrientationMask.portrait, andRotateTo: UIInterfaceOrientation.portrait)
+    }
+    
+    // MARK: - viewDidLoad
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -198,32 +211,28 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
         setupLogInRegisterButton()
         setupProfileImgView()
         
-        nameTextField.delegate      = self
+//        nameTextField.delegate      = self
         telTextField.delegate       = self
         emailTextField.delegate     = self
         passwTextField.delegate     = self
         passwVeriTextField.delegate = self
         
-//        // for AutoFill feature
-//        if #available(iOS 11.0, *) {
-//            emailTextField.textContentType = .username
-//            passwTextField.textContentType = .password
-//        } else {
-//            // Fallback on earlier versions
-//        }
-        
         // Setup keyboardtype for each TF
-        nameTextField.keyboardType  = .default
+//        nameTextField.keyboardType  = .default
         telTextField.keyboardType   = .numberPad
         emailTextField.keyboardType = .emailAddress
         // Setup "return" key on keyboard for each TF
-        nameTextField.returnKeyType  = UIReturnKeyType.next
+//        nameTextField.returnKeyType  = UIReturnKeyType.next
         telTextField.returnKeyType   = UIReturnKeyType.next
         emailTextField.returnKeyType = UIReturnKeyType.next
         passwTextField.returnKeyType = UIReturnKeyType.next
         // Dismiss Keyboard using "return" key on keyboard.
         passwVeriTextField.returnKeyType = UIReturnKeyType.done // Last input TF should be here!!!
         
+        // MARK: Keyboard related
+//        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillChange(notification:)), name: UIResponder.keyboardWillShowNotification, object: nil)
+//        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillChange(notification:)), name: UIResponder.keyboardWillHideNotification, object: nil)
+//        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillChange(notification:)), name: UIResponder.keyboardWillChangeFrameNotification, object: nil)
         // Enable Tap elsewhere to dismissKeyboard func
         let tapToDismissKeyboard = UITapGestureRecognizer(target: self, action:#selector(dismissKeyboard))
         tapToDismissKeyboard.cancelsTouchesInView = false
@@ -231,13 +240,29 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
         
     }
     
+//    deinit {
+//        // Stop listening to Keyboard events
+//        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillShowNotification, object: nil)
+//        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillHideNotification, object: nil)
+//        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillChangeFrameNotification, object: nil)
+//    }
+    
+//    @objc func keyboardWillChange(notification:  Notification) {
+//        if notification.name == UIResponder.keyboardWillShowNotification ||
+//            notification.name == UIResponder.keyboardWillChangeFrameNotification {
+//            inputsContainerView.frame.origin.y += -10
+//        } else {
+//            inputsContainerView.frame.origin.y += -10
+//        }
+//    }
+    
     // MARK: - Functions
     // MARK: Registration info Encryption
     func hashSaltAndPassw() {
         let passwWithSalt = self.passwTextField.text! + salt
-        print(passwWithSalt)
+        print("Passw+salt: \(passwWithSalt)")
         hashed = passwWithSalt.md5()
-        print(hashed)
+        print("hashed: \(hashed)")
     }
     
     // MARK: Input info Validation
@@ -256,8 +281,6 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
     // MARK: UITextFieldDelegate
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         switch textField {
-            case nameTextField:
-                telTextField.becomeFirstResponder()
             case telTextField:
                 emailTextField.becomeFirstResponder()
             case emailTextField:
@@ -271,7 +294,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
     }
     
     @objc func dismissKeyboard (_ sender: UITapGestureRecognizer) {
-        nameTextField.resignFirstResponder()
+//        nameTextField.resignFirstResponder()
         telTextField.resignFirstResponder()
         emailTextField.resignFirstResponder()
         passwTextField.resignFirstResponder()
@@ -284,20 +307,20 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
     func setupProfileImgView() {
         //Constraints
         profileImgView.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
-        profileImgView.bottomAnchor.constraint(equalTo: inputsContainerView.topAnchor, constant: -60).isActive = true
-        profileImgView.topAnchor.constraint(equalTo: inputsContainerView.topAnchor, constant: -100).isActive = true
+        profileImgView.bottomAnchor.constraint(equalTo: inputsContainerView.topAnchor, constant: -82).isActive = true
+        profileImgView.topAnchor.constraint(equalTo: inputsContainerView.topAnchor, constant: -118).isActive = true
     }
     
     func setupInputsContainerView() {
         //Constraints
         inputsContainerView.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
-        inputsContainerView.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: -40).isActive = true
-        inputsContainerView.widthAnchor.constraint(equalTo: view.widthAnchor, constant: -48).isActive = true
-        inputsContainerView.heightAnchor.constraint(equalToConstant: 250).isActive = true
+        inputsContainerView.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: -30).isActive = true
+        inputsContainerView.widthAnchor.constraint(equalTo: view.widthAnchor, constant: -36).isActive = true
+        inputsContainerView.heightAnchor.constraint(equalToConstant: 200).isActive = true
         
         //Input Fields
-        inputsContainerView.addSubview(nameTextField)
-        inputsContainerView.addSubview(nameSeparatorView)
+//        inputsContainerView.addSubview(nameTextField)
+//        inputsContainerView.addSubview(nameSeparatorView)
         inputsContainerView.addSubview(telTextField)
         inputsContainerView.addSubview(telSeparatorView)
         inputsContainerView.addSubview(emailTextField)
@@ -306,23 +329,23 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
         inputsContainerView.addSubview(passwSeparatorView)
         inputsContainerView.addSubview(passwVeriTextField)
         
-        //Constraints for nameTextField
-        nameTextField.leftAnchor.constraint(equalTo: inputsContainerView.leftAnchor, constant: 16).isActive = true
-        nameTextField.topAnchor.constraint(equalTo: inputsContainerView.topAnchor).isActive = true
-        nameTextField.widthAnchor.constraint(equalTo: inputsContainerView.widthAnchor, constant: -24).isActive = true
-        nameTextField.heightAnchor.constraint(equalTo: inputsContainerView.heightAnchor, multiplier: 1/5).isActive = true
-        
-        //Constraints for nameSeparatorView
-        nameSeparatorView.leftAnchor.constraint(equalTo: inputsContainerView.leftAnchor, constant: 16).isActive = true
-        nameSeparatorView.topAnchor.constraint(equalTo: nameTextField.bottomAnchor, constant: -1).isActive = true
-        nameSeparatorView.widthAnchor.constraint(equalTo: inputsContainerView.widthAnchor, constant: -32).isActive = true
-        nameSeparatorView.heightAnchor.constraint(equalToConstant: 1).isActive = true
+//        //Constraints for nameTextField
+//        nameTextField.leftAnchor.constraint(equalTo: inputsContainerView.leftAnchor, constant: 16).isActive = true
+//        nameTextField.topAnchor.constraint(equalTo: inputsContainerView.topAnchor).isActive = true
+//        nameTextField.widthAnchor.constraint(equalTo: inputsContainerView.widthAnchor, constant: -24).isActive = true
+//        nameTextField.heightAnchor.constraint(equalTo: inputsContainerView.heightAnchor, multiplier: 1/5).isActive = true
+//
+//        //Constraints for nameSeparatorView
+//        nameSeparatorView.leftAnchor.constraint(equalTo: inputsContainerView.leftAnchor, constant: 16).isActive = true
+//        nameSeparatorView.topAnchor.constraint(equalTo: nameTextField.bottomAnchor, constant: -1).isActive = true
+//        nameSeparatorView.widthAnchor.constraint(equalTo: inputsContainerView.widthAnchor, constant: -32).isActive = true
+//        nameSeparatorView.heightAnchor.constraint(equalToConstant: 1).isActive = true
         
         //Constraints for telTextField
         telTextField.leftAnchor.constraint(equalTo: inputsContainerView.leftAnchor, constant: 16).isActive = true
-        telTextField.topAnchor.constraint(equalTo: nameSeparatorView.bottomAnchor).isActive = true
+        telTextField.topAnchor.constraint(equalTo: inputsContainerView.topAnchor).isActive = true
         telTextField.widthAnchor.constraint(equalTo: inputsContainerView.widthAnchor, constant: -24).isActive = true
-        telTextField.heightAnchor.constraint(equalTo: inputsContainerView.heightAnchor, multiplier: 1/5).isActive = true
+        telTextField.heightAnchor.constraint(equalTo: inputsContainerView.heightAnchor, multiplier: 1/4).isActive = true
         
         //Constraints for telSeparatorView
         telSeparatorView.leftAnchor.constraint(equalTo: inputsContainerView.leftAnchor, constant: 16).isActive = true
@@ -334,7 +357,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
         emailTextField.leftAnchor.constraint(equalTo: inputsContainerView.leftAnchor, constant: 16).isActive = true
         emailTextField.topAnchor.constraint(equalTo: telSeparatorView.bottomAnchor).isActive = true
         emailTextField.widthAnchor.constraint(equalTo: inputsContainerView.widthAnchor, constant: -24).isActive = true
-        emailTextField.heightAnchor.constraint(equalTo: inputsContainerView.heightAnchor, multiplier: 1/5).isActive = true
+        emailTextField.heightAnchor.constraint(equalTo: inputsContainerView.heightAnchor, multiplier: 1/4).isActive = true
         
         //Constraints for emailSeparatorView
         emailSeparatorView.leftAnchor.constraint(equalTo: inputsContainerView.leftAnchor, constant: 16).isActive = true
@@ -346,7 +369,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
         passwTextField.leftAnchor.constraint(equalTo: inputsContainerView.leftAnchor, constant: 16).isActive = true
         passwTextField.topAnchor.constraint(equalTo: emailSeparatorView.bottomAnchor).isActive = true
         passwTextField.widthAnchor.constraint(equalTo: inputsContainerView.widthAnchor, constant: -24).isActive = true
-        passwTextField.heightAnchor.constraint(equalTo: inputsContainerView.heightAnchor, multiplier: 1/5).isActive = true
+        passwTextField.heightAnchor.constraint(equalTo: inputsContainerView.heightAnchor, multiplier: 1/4).isActive = true
         
         //Constraints for passwSeparatorView
         passwSeparatorView.leftAnchor.constraint(equalTo: inputsContainerView.leftAnchor, constant: 16).isActive = true
@@ -358,15 +381,15 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
         passwVeriTextField.leftAnchor.constraint(equalTo: inputsContainerView.leftAnchor, constant: 16).isActive = true
         passwVeriTextField.topAnchor.constraint(equalTo: passwSeparatorView.bottomAnchor).isActive = true
         passwVeriTextField.widthAnchor.constraint(equalTo: inputsContainerView.widthAnchor, constant: -24).isActive = true
-        passwVeriTextField.heightAnchor.constraint(equalTo: inputsContainerView.heightAnchor, multiplier: 1/5).isActive = true
+        passwVeriTextField.heightAnchor.constraint(equalTo: inputsContainerView.heightAnchor, multiplier: 1/4).isActive = true
     }
     
     func setupLogInRegisterButton() {
         //Constraints
         logInRegisterButton.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
-        logInRegisterButton.topAnchor.constraint(equalTo: inputsContainerView.bottomAnchor, constant: 48).isActive = true
+        logInRegisterButton.topAnchor.constraint(equalTo: inputsContainerView.bottomAnchor, constant: 68).isActive = true
         logInRegisterButton.widthAnchor.constraint(equalTo: inputsContainerView.widthAnchor).isActive = true
-        logInRegisterButton.heightAnchor.constraint(equalToConstant: 56).isActive = true
+        logInRegisterButton.heightAnchor.constraint(equalToConstant: 52).isActive = true
     }
     
     // MARK: - VC Settings
@@ -377,6 +400,15 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
     // MARK: Rotation Disabled
     override var shouldAutorotate: Bool {
         return false
+    }
+    
+    override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
+        // Only allow Portrait
+        return .portrait
+    }
+
+    override var preferredInterfaceOrientationForPresentation: UIInterfaceOrientation {
+        return .portrait
     }
     
 }
