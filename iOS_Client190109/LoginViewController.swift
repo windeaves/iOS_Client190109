@@ -459,7 +459,6 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
         let handler = {
             (hyperLabel: FRHyperLabel!, substring: String!) -> Void in
             self.setupSignInView()
-            print("set")
         }
         signNoteForSignUpLb.setLinksForSubstrings(["Sign in here!"], withLinkHandler: handler)
     }
@@ -518,11 +517,11 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
         //Constraints
         if screenHeight == 568.0 && screenWidth == 320.0 {
             // iPhone with 4 inch Screen
-            signInBtn.topAnchor.constraint(equalTo: signInInputsContainerView.bottomAnchor, constant: 48).isActive = true
+            signInBtn.topAnchor.constraint(equalTo: signInInputsContainerView.bottomAnchor, constant: 98).isActive = true
             signInBtn.heightAnchor.constraint(equalToConstant: 48).isActive = true
         } else {
             // iPhone with >= 4.7 inch Screen
-            signInBtn.topAnchor.constraint(equalTo: signInInputsContainerView.bottomAnchor, constant: 68).isActive = true
+            signInBtn.topAnchor.constraint(equalTo: signInInputsContainerView.bottomAnchor, constant: 118).isActive = true
             signInBtn.heightAnchor.constraint(equalToConstant: 52).isActive = true
         }
         signInBtn.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
