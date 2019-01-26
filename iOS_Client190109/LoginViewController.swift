@@ -33,9 +33,10 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
     let hapticSelection    = UISelectionFeedbackGenerator()
     let hapticNotification = UINotificationFeedbackGenerator()
     
-    @IBOutlet weak var signNoteLb: FRHyperLabel!
+    @IBOutlet weak var signNoteForSignUpLb: FRHyperLabel!
+    @IBOutlet weak var signNoteForSignInLb: FRHyperLabel!
     
-    // MARK: Create Views
+    // MARK: - Views for Signing Up
     let profileImgView: UIImageView = {
         let imgView = UIImageView()
         imgView.image = UIImage(named: "exeLogo_black")
@@ -44,7 +45,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
         return imgView
     }()
     
-    let inputsContainerView: UIView = {
+    let signUpInputsContainerView: UIView = {
         let view = UIView()
         view.backgroundColor = UIColor.InterfaceColor.white
         view.translatesAutoresizingMaskIntoConstraints = false
@@ -56,7 +57,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
     let signUpBtn: UIButton = {
         let button = UIButton(type: .system)
         button.backgroundColor = UIColor.InterfaceColor.black.withAlphaComponent(0.5)
-        button.setTitle("R E G I S T E R", for: .normal)
+        button.setTitle("S I G N   U P", for: .normal)
         button.setTitleColor(UIColor.white, for: .normal)
         button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 18)
         button.translatesAutoresizingMaskIntoConstraints = false
@@ -130,29 +131,6 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
         
     }
     
-    let signInBtn: UIButton = {
-        let button = UIButton(type: .system)
-        button.backgroundColor = UIColor.InterfaceColor.black.withAlphaComponent(0.5)
-        button.setTitle("SIGN IN", for: .normal)
-        button.setTitleColor(UIColor.white, for: .normal)
-        button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 18)
-        button.translatesAutoresizingMaskIntoConstraints = false
-        button.layer.cornerRadius = 16
-//        button.layer.masksToBounds = true
-        
-        button.addTarget(self, action: #selector(handleTouchDown), for: .touchDown)
-        button.addTarget(self, action: #selector(handleSignIn), for: .touchUpInside)
-        
-        button.isHidden = true
-        
-        return button
-    }()
-    
-    @objc func handleSignIn() {
-        // MARK: - SignIn Process
-        
-    }
-    
     let telTextField: UITextField = {
         let textField = UITextField()
         textField.placeholder = "Phone Number"
@@ -204,27 +182,71 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
         return textField
     }()
     
+    // MARK: - Views for Signing In
+    let signInfoTextField: UITextField = {
+        let textField = UITextField()
+        textField.placeholder = "Your Info."
+        textField.translatesAutoresizingMaskIntoConstraints = false
+        return textField
+    }()
+    
+    let signInInfoSeparatorView: UIView = {
+        let view = UIView()
+        view.backgroundColor = UIColor.InterfaceColor.lightGray
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
+    
+    let passwLogTextField: UITextField = {
+        let textField = UITextField()
+        textField.placeholder = "Password"
+        textField.isSecureTextEntry = true
+        textField.translatesAutoresizingMaskIntoConstraints = false
+        return textField
+    }()
+    
+    let signInInputsContainerView: UIView = {
+        let view = UIView()
+        view.backgroundColor = UIColor.InterfaceColor.white
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.layer.cornerRadius = 16
+        view.layer.masksToBounds = true
+        
+        view.alpha = 0
+        view.isHidden = true
+        
+        return view
+    }()
+    
+    let signInBtn: UIButton = {
+        let button = UIButton(type: .system)
+        button.backgroundColor = UIColor.InterfaceColor.black.withAlphaComponent(0.5)
+        button.setTitle("S I G N   I N", for: .normal)
+        button.setTitleColor(UIColor.white, for: .normal)
+        button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 18)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.layer.cornerRadius = 16
+        //        button.layer.masksToBounds = true
+        
+        button.addTarget(self, action: #selector(handleTouchDown), for: .touchDown)
+        button.addTarget(self, action: #selector(handleSignIn), for: .touchUpInside)
+        
+        button.alpha = 0
+        button.isHidden = true
+        
+        return button
+    }()
+    
+    @objc func handleSignIn() {
+        // MARK: - SignIn Process
+        
+    }
+    
     override func viewWillAppear(_ animated: Bool) {
         AppDelegate.AppUtility.lockOrientation(UIInterfaceOrientationMask.portrait, andRotateTo: UIInterfaceOrientation.portrait)
     }
     
-    // MARK: - viewDidLoad
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        
-        view.backgroundColor = UIColor.InterfaceColor.TianyiBlue
-        
-        view.addSubview(inputsContainerView)
-        view.addSubview(signUpBtn)
-        view.addSubview(profileImgView)
-        view.addSubview(signNoteLb)
-        
-        setupInputsContainerView()
-        setupLogInRegisterButton()
-        setupProfileImgView()
-        setupSignNoteLb()
-        
-//        nameTextField.delegate      = self
+    fileprivate func signUpTFsDelegates() {
         telTextField.delegate       = self
         emailTextField.delegate     = self
         passwTextField.delegate     = self
@@ -239,11 +261,48 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
         passwTextField.returnKeyType = UIReturnKeyType.next
         // Dismiss Keyboard using "return" key on keyboard.
         passwVeriTextField.returnKeyType = UIReturnKeyType.done // Last input TF should be here!!!
+    }
+    
+    fileprivate func signInTFsDelegates() {
+        signInfoTextField.delegate = self
+        passwLogTextField.delegate = self
+        
+        // Setup "return" key on keyboard for each TF
+        signInfoTextField.returnKeyType   = UIReturnKeyType.next
+        passwLogTextField.returnKeyType = UIReturnKeyType.done
+    }
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        
+        view.backgroundColor = UIColor.InterfaceColor.TianyiBlue
+        
+        view.addSubview(signUpInputsContainerView)
+        view.addSubview(signUpBtn)
+        view.addSubview(profileImgView)
+        view.addSubview(signNoteForSignUpLb)
+        
+        setupSignUpInputsContainerView()
+        setupSignUpButton()
+        setupProfileImgView()
+        setupSignNoteLbForSignUpState()
+        setupSignNoteLbForSignInState()
+        
+        view.addSubview(signInInputsContainerView)
+        view.addSubview(signInBtn)
+        
+        self.setupSignInInputsContainerView()
+        self.setupSignInButton()
+        
+        signUpTFsDelegates()
+        signInTFsDelegates()
         
         let tapToDismissKeyboard = UITapGestureRecognizer(target: self, action:#selector(dismissKeyboard))
         tapToDismissKeyboard.cancelsTouchesInView = false
         view.addGestureRecognizer(tapToDismissKeyboard)
         
+        signNoteForSignInLb.isHidden = true
+        signNoteForSignInLb.alpha = 0
     }
     
     // MARK: - Functions
@@ -277,6 +336,8 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
                 passwTextField.becomeFirstResponder()
             case passwTextField:
                 passwVeriTextField.becomeFirstResponder()
+            case signInfoTextField:
+                passwLogTextField.becomeFirstResponder()
             default:
                 textField.resignFirstResponder()
         }
@@ -289,6 +350,8 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
         emailTextField.resignFirstResponder()
         passwTextField.resignFirstResponder()
         passwVeriTextField.resignFirstResponder()
+        signInfoTextField.resignFirstResponder()
+        passwLogTextField.resignFirstResponder()
         UIView.animate(withDuration: 0.3) {
             self.view.layoutIfNeeded()
         }
@@ -299,120 +362,230 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
         profileImgView.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
         if screenHeight == 568.0 && screenWidth == 320.0 {
             // iPhone with 4 inch Screen
-            profileImgView.bottomAnchor.constraint(equalTo: inputsContainerView.topAnchor, constant: -56).isActive = true
-            profileImgView.topAnchor.constraint(equalTo: inputsContainerView.topAnchor, constant: -90).isActive = true
+            profileImgView.bottomAnchor.constraint(equalTo: signUpInputsContainerView.topAnchor, constant: -56).isActive = true
+            profileImgView.topAnchor.constraint(equalTo: signUpInputsContainerView.topAnchor, constant: -90).isActive = true
         } else {
             // iPhone with >= 4.7 inch Screen
-            profileImgView.bottomAnchor.constraint(equalTo: inputsContainerView.topAnchor, constant: -78).isActive = true
-            profileImgView.topAnchor.constraint(equalTo: inputsContainerView.topAnchor, constant: -114).isActive = true
+            profileImgView.bottomAnchor.constraint(equalTo: signUpInputsContainerView.topAnchor, constant: -78).isActive = true
+            profileImgView.topAnchor.constraint(equalTo: signUpInputsContainerView.topAnchor, constant: -114).isActive = true
         }
     }
     
-    func setupInputsContainerView() {
+    func setupSignUpInputsContainerView() {
         //Constraints
         if screenHeight == 568.0 && screenWidth == 320.0 {
             // iPhone with 4 inch Screen
-            inputsContainerView.widthAnchor.constraint(equalTo: view.widthAnchor, constant: -24).isActive = true
+            signUpInputsContainerView.widthAnchor.constraint(equalTo: view.widthAnchor, constant: -24).isActive = true
         } else {
             // iPhone with >= 4.7 inch Screen
-            inputsContainerView.widthAnchor.constraint(equalTo: view.widthAnchor, constant: -36).isActive = true
+            signUpInputsContainerView.widthAnchor.constraint(equalTo: view.widthAnchor, constant: -36).isActive = true
         }
-        inputsContainerView.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: -30).isActive = true
-        inputsContainerView.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
-        inputsContainerView.heightAnchor.constraint(equalToConstant: 200).isActive = true
+        signUpInputsContainerView.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: -30).isActive = true
+        signUpInputsContainerView.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+        signUpInputsContainerView.heightAnchor.constraint(equalToConstant: 200).isActive = true
         
         //Input Fields
-        inputsContainerView.addSubview(telTextField)
-        inputsContainerView.addSubview(telSeparatorView)
-        inputsContainerView.addSubview(emailTextField)
-        inputsContainerView.addSubview(emailSeparatorView)
-        inputsContainerView.addSubview(passwTextField)
-        inputsContainerView.addSubview(passwSeparatorView)
-        inputsContainerView.addSubview(passwVeriTextField)
+        signUpInputsContainerView.addSubview(telTextField)
+        signUpInputsContainerView.addSubview(telSeparatorView)
+        signUpInputsContainerView.addSubview(emailTextField)
+        signUpInputsContainerView.addSubview(emailSeparatorView)
+        signUpInputsContainerView.addSubview(passwTextField)
+        signUpInputsContainerView.addSubview(passwSeparatorView)
+        signUpInputsContainerView.addSubview(passwVeriTextField)
         
         //Constraints for telTextField
-        telTextField.leftAnchor.constraint(equalTo: inputsContainerView.leftAnchor, constant: 16).isActive = true
-        telTextField.topAnchor.constraint(equalTo: inputsContainerView.topAnchor).isActive = true
-        telTextField.widthAnchor.constraint(equalTo: inputsContainerView.widthAnchor, constant: -24).isActive = true
-        telTextField.heightAnchor.constraint(equalTo: inputsContainerView.heightAnchor, multiplier: 1/4).isActive = true
+        telTextField.leftAnchor.constraint(equalTo: signUpInputsContainerView.leftAnchor, constant: 16).isActive = true
+        telTextField.topAnchor.constraint(equalTo: signUpInputsContainerView.topAnchor).isActive = true
+        telTextField.widthAnchor.constraint(equalTo: signUpInputsContainerView.widthAnchor, constant: -24).isActive = true
+        telTextField.heightAnchor.constraint(equalTo: signUpInputsContainerView.heightAnchor, multiplier: 1/4).isActive = true
         
         //Constraints for telSeparatorView
-        telSeparatorView.leftAnchor.constraint(equalTo: inputsContainerView.leftAnchor, constant: 16).isActive = true
+        telSeparatorView.leftAnchor.constraint(equalTo: signUpInputsContainerView.leftAnchor, constant: 16).isActive = true
         telSeparatorView.topAnchor.constraint(equalTo: telTextField.bottomAnchor, constant: -1).isActive = true
-        telSeparatorView.widthAnchor.constraint(equalTo: inputsContainerView.widthAnchor, constant: -32).isActive = true
+        telSeparatorView.widthAnchor.constraint(equalTo: signUpInputsContainerView.widthAnchor, constant: -32).isActive = true
         telSeparatorView.heightAnchor.constraint(equalToConstant: 1).isActive = true
         
         //Constraints for emailTextField
-        emailTextField.leftAnchor.constraint(equalTo: inputsContainerView.leftAnchor, constant: 16).isActive = true
+        emailTextField.leftAnchor.constraint(equalTo: signUpInputsContainerView.leftAnchor, constant: 16).isActive = true
         emailTextField.topAnchor.constraint(equalTo: telSeparatorView.bottomAnchor).isActive = true
-        emailTextField.widthAnchor.constraint(equalTo: inputsContainerView.widthAnchor, constant: -24).isActive = true
-        emailTextField.heightAnchor.constraint(equalTo: inputsContainerView.heightAnchor, multiplier: 1/4).isActive = true
+        emailTextField.widthAnchor.constraint(equalTo: signUpInputsContainerView.widthAnchor, constant: -24).isActive = true
+        emailTextField.heightAnchor.constraint(equalTo: signUpInputsContainerView.heightAnchor, multiplier: 1/4).isActive = true
         
         //Constraints for emailSeparatorView
-        emailSeparatorView.leftAnchor.constraint(equalTo: inputsContainerView.leftAnchor, constant: 16).isActive = true
+        emailSeparatorView.leftAnchor.constraint(equalTo: signUpInputsContainerView.leftAnchor, constant: 16).isActive = true
         emailSeparatorView.topAnchor.constraint(equalTo: emailTextField.bottomAnchor, constant: -1).isActive = true
-        emailSeparatorView.widthAnchor.constraint(equalTo: inputsContainerView.widthAnchor, constant: -32).isActive = true
+        emailSeparatorView.widthAnchor.constraint(equalTo: signUpInputsContainerView.widthAnchor, constant: -32).isActive = true
         emailSeparatorView.heightAnchor.constraint(equalToConstant: 1).isActive = true
         
         //Constraints for passwTextField
-        passwTextField.leftAnchor.constraint(equalTo: inputsContainerView.leftAnchor, constant: 16).isActive = true
+        passwTextField.leftAnchor.constraint(equalTo: signUpInputsContainerView.leftAnchor, constant: 16).isActive = true
         passwTextField.topAnchor.constraint(equalTo: emailSeparatorView.bottomAnchor).isActive = true
-        passwTextField.widthAnchor.constraint(equalTo: inputsContainerView.widthAnchor, constant: -24).isActive = true
-        passwTextField.heightAnchor.constraint(equalTo: inputsContainerView.heightAnchor, multiplier: 1/4).isActive = true
+        passwTextField.widthAnchor.constraint(equalTo: signUpInputsContainerView.widthAnchor, constant: -24).isActive = true
+        passwTextField.heightAnchor.constraint(equalTo: signUpInputsContainerView.heightAnchor, multiplier: 1/4).isActive = true
         
         //Constraints for passwSeparatorView
-        passwSeparatorView.leftAnchor.constraint(equalTo: inputsContainerView.leftAnchor, constant: 16).isActive = true
+        passwSeparatorView.leftAnchor.constraint(equalTo: signUpInputsContainerView.leftAnchor, constant: 16).isActive = true
         passwSeparatorView.topAnchor.constraint(equalTo: passwTextField.bottomAnchor, constant: -1).isActive = true
-        passwSeparatorView.widthAnchor.constraint(equalTo: inputsContainerView.widthAnchor, constant: -32).isActive = true
+        passwSeparatorView.widthAnchor.constraint(equalTo: signUpInputsContainerView.widthAnchor, constant: -32).isActive = true
         passwSeparatorView.heightAnchor.constraint(equalToConstant: 1).isActive = true
         
         //Constraints for passwVeriTextField
-        passwVeriTextField.leftAnchor.constraint(equalTo: inputsContainerView.leftAnchor, constant: 16).isActive = true
+        passwVeriTextField.leftAnchor.constraint(equalTo: signUpInputsContainerView.leftAnchor, constant: 16).isActive = true
         passwVeriTextField.topAnchor.constraint(equalTo: passwSeparatorView.bottomAnchor).isActive = true
-        passwVeriTextField.widthAnchor.constraint(equalTo: inputsContainerView.widthAnchor, constant: -24).isActive = true
-        passwVeriTextField.heightAnchor.constraint(equalTo: inputsContainerView.heightAnchor, multiplier: 1/4).isActive = true
+        passwVeriTextField.widthAnchor.constraint(equalTo: signUpInputsContainerView.widthAnchor, constant: -24).isActive = true
+        passwVeriTextField.heightAnchor.constraint(equalTo: signUpInputsContainerView.heightAnchor, multiplier: 1/4).isActive = true
     }
     
-    func setupLogInRegisterButton() {
+    func setupSignUpButton() {
         //Constraints
         if screenHeight == 568.0 && screenWidth == 320.0 {
             // iPhone with 4 inch Screen
-            signUpBtn.topAnchor.constraint(equalTo: inputsContainerView.bottomAnchor, constant: 48).isActive = true
+            signUpBtn.topAnchor.constraint(equalTo: signUpInputsContainerView.bottomAnchor, constant: 48).isActive = true
             signUpBtn.heightAnchor.constraint(equalToConstant: 48).isActive = true
         } else {
             // iPhone with >= 4.7 inch Screen
-            signUpBtn.topAnchor.constraint(equalTo: inputsContainerView.bottomAnchor, constant: 68).isActive = true
+            signUpBtn.topAnchor.constraint(equalTo: signUpInputsContainerView.bottomAnchor, constant: 68).isActive = true
             signUpBtn.heightAnchor.constraint(equalToConstant: 52).isActive = true
         }
         signUpBtn.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
-        signUpBtn.widthAnchor.constraint(equalTo: inputsContainerView.widthAnchor).isActive = true
+        signUpBtn.widthAnchor.constraint(equalTo: signUpInputsContainerView.widthAnchor).isActive = true
     }
     
-    func setupSignNoteLb() {
+    func setupSignNoteLbForSignUpState() {
         let string = "Already have account? Sign in here!"
         let attributes = [NSAttributedString.Key.foregroundColor: UIColor.black,
                           NSAttributedString.Key.font: UIFont.preferredFont(forTextStyle: UIFont.TextStyle.headline)]
-        signNoteLb.attributedText = NSAttributedString(string: string, attributes: attributes)
+        signNoteForSignUpLb.attributedText = NSAttributedString(string: string, attributes: attributes)
         let handler = {
             (hyperLabel: FRHyperLabel!, substring: String!) -> Void in
             self.setupSignInView()
+            print("set")
         }
-        signNoteLb.setLinksForSubstrings(["Sign in here!"], withLinkHandler: handler)
+        signNoteForSignUpLb.setLinksForSubstrings(["Sign in here!"], withLinkHandler: handler)
+    }
+    
+    func setupSignNoteLbForSignInState() {
+        let string = "Don't have account? Sign up here!"
+        let attributes = [NSAttributedString.Key.foregroundColor: UIColor.black,
+                          NSAttributedString.Key.font: UIFont.preferredFont(forTextStyle: UIFont.TextStyle.headline)]
+        signNoteForSignInLb.attributedText = NSAttributedString(string: string, attributes: attributes)
+        let handler = {
+            (hyperLabel: FRHyperLabel!, substring: String!) -> Void in
+            self.setupSignUpView()
+        }
+        signNoteForSignInLb.setLinksForSubstrings(["Sign up here!"], withLinkHandler: handler)
+    }
+    
+    func setupSignInInputsContainerView() {
+        //Constraints
+        if screenHeight == 568.0 && screenWidth == 320.0 {
+            // iPhone with 4 inch Screen
+            signInInputsContainerView.widthAnchor.constraint(equalTo: view.widthAnchor, constant: -24).isActive = true
+        } else {
+            // iPhone with >= 4.7 inch Screen
+            signInInputsContainerView.widthAnchor.constraint(equalTo: view.widthAnchor, constant: -36).isActive = true
+        }
+        signInInputsContainerView.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: -30).isActive = true
+        signInInputsContainerView.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+        signInInputsContainerView.heightAnchor.constraint(equalToConstant: 100).isActive = true
+        
+        //Input Fields
+        signInInputsContainerView.addSubview(signInfoTextField)
+        signInInputsContainerView.addSubview(signInInfoSeparatorView)
+        signInInputsContainerView.addSubview(passwLogTextField)
+        
+        //Constraints for telTextField
+        signInfoTextField.leftAnchor.constraint(equalTo: signInInputsContainerView.leftAnchor, constant: 16).isActive = true
+        signInfoTextField.topAnchor.constraint(equalTo: signInInputsContainerView.topAnchor).isActive = true
+        signInfoTextField.widthAnchor.constraint(equalTo: signInInputsContainerView.widthAnchor, constant: -24).isActive = true
+        signInfoTextField.heightAnchor.constraint(equalTo: signInInputsContainerView.heightAnchor, multiplier: 1/2).isActive = true
+        
+        //Constraints for telSeparatorView
+        signInInfoSeparatorView.leftAnchor.constraint(equalTo: signInInputsContainerView.leftAnchor, constant: 16).isActive = true
+        signInInfoSeparatorView.topAnchor.constraint(equalTo: signInfoTextField.bottomAnchor, constant: -1).isActive = true
+        signInInfoSeparatorView.widthAnchor.constraint(equalTo: signInInputsContainerView.widthAnchor, constant: -32).isActive = true
+        signInInfoSeparatorView.heightAnchor.constraint(equalToConstant: 1).isActive = true
+        
+        //Constraints for emailTextField
+        passwLogTextField.leftAnchor.constraint(equalTo: signInInputsContainerView.leftAnchor, constant: 16).isActive = true
+        passwLogTextField.topAnchor.constraint(equalTo: signInInfoSeparatorView.bottomAnchor).isActive = true
+        passwLogTextField.widthAnchor.constraint(equalTo: signInInputsContainerView.widthAnchor, constant: -24).isActive = true
+        passwLogTextField.heightAnchor.constraint(equalTo: signInInputsContainerView.heightAnchor, multiplier: 1/2).isActive = true
+        
+    }
+    
+    func setupSignInButton() {
+        //Constraints
+        if screenHeight == 568.0 && screenWidth == 320.0 {
+            // iPhone with 4 inch Screen
+            signInBtn.topAnchor.constraint(equalTo: signInInputsContainerView.bottomAnchor, constant: 48).isActive = true
+            signInBtn.heightAnchor.constraint(equalToConstant: 48).isActive = true
+        } else {
+            // iPhone with >= 4.7 inch Screen
+            signInBtn.topAnchor.constraint(equalTo: signInInputsContainerView.bottomAnchor, constant: 68).isActive = true
+            signInBtn.heightAnchor.constraint(equalToConstant: 52).isActive = true
+        }
+        signInBtn.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+        signInBtn.widthAnchor.constraint(equalTo: signInInputsContainerView.widthAnchor).isActive = true
+    }
+    
+    // MARK: - Setup SignUp View
+    func  setupSignUpView() {
+        self.view.isUserInteractionEnabled = false
+        UIView.animate(withDuration: 0.2, animations: {
+            self.signInInputsContainerView.alpha = 0
+            self.signInBtn.alpha = 0
+            self.signNoteForSignInLb.alpha = 0
+        }, completion: { _ in
+            self.signInInputsContainerView.isHidden = true
+            self.signInBtn.isHidden = true
+            self.signNoteForSignInLb.isHidden = true
+            
+//            self.setupSignNoteLbForSignUpState()
+            
+            self.signUpInputsContainerView.isHidden = false
+            self.signUpBtn.isHidden = false
+            self.signNoteForSignUpLb.isHidden = false
+            
+            UIView.animate(withDuration: 0.2, animations: {
+                self.signUpInputsContainerView.alpha = 1
+                self.signUpBtn.alpha = 1
+                self.signNoteForSignUpLb.alpha = 1
+            }, completion: { _ in
+                // Hehe
+            })
+            self.view.isUserInteractionEnabled = true
+        })
     }
     
     // MARK: - Setup SignIn View
     func  setupSignInView() {
         self.view.isUserInteractionEnabled = false
-        UIView.animate(withDuration: 0.3, animations: {
-            self.inputsContainerView.alpha = 0
+        UIView.animate(withDuration: 0.2, animations: {
+            self.signUpInputsContainerView.alpha = 0
+            self.signUpBtn.alpha = 0
+            self.signNoteForSignUpLb.alpha = 0
         }, completion: { _ in
-            self.inputsContainerView.isHidden = true
-            // New inputContainerView
-            // Show signInBtn
-            // Change signNoteLb.text
+            self.signUpInputsContainerView.isHidden = true
+            self.signUpBtn.isHidden = true
+            self.signNoteForSignUpLb.isHidden = true
+            
+//            self.setupSignNoteLbForSignInState()
+            
+            self.signInInputsContainerView.isHidden = false
+            self.signInBtn.isHidden = false
+            self.signNoteForSignInLb.isHidden = false
+            
+            
+            UIView.animate(withDuration: 0.2, animations: {
+                self.signInInputsContainerView.alpha = 1
+                self.signInBtn.alpha = 1
+                self.signNoteForSignInLb.alpha = 1
+            }, completion: { _ in
+                // Hehe
+            })
             self.view.isUserInteractionEnabled = true
         })
-        
     }
     
     // MARK: - VC Settings

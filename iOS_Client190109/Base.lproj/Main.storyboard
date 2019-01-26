@@ -138,7 +138,14 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="812"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Sign in here" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="i4y-dR-IL5" customClass="FRHyperLabel">
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Sign in here" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="i4y-dR-IL5" userLabel="SignNoteForSignUpLb" customClass="FRHyperLabel">
+                                <rect key="frame" x="16" y="748" width="343" height="30"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="22"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Sign in here" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="1t4-iA-hEs" userLabel="SignNoteForSignInLb" customClass="FRHyperLabel">
                                 <rect key="frame" x="16" y="748" width="343" height="30"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="22"/>
@@ -150,7 +157,8 @@
                         <viewLayoutGuide key="safeArea" id="L1T-xa-FNB"/>
                     </view>
                     <connections>
-                        <outlet property="signNoteLb" destination="i4y-dR-IL5" id="bDW-E5-jNd"/>
+                        <outlet property="signNoteForSignInLb" destination="1t4-iA-hEs" id="iFn-c5-8QG"/>
+                        <outlet property="signNoteForSignUpLb" destination="i4y-dR-IL5" id="bGz-cH-jkn"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="epf-EL-5oy" userLabel="First Responder" sceneMemberID="firstResponder"/>
