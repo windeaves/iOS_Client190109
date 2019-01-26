@@ -9,11 +9,22 @@
 import UIKit
 import Alamofire
 import CryptoSwift
+import FRHyperLabel
 
 class LoginViewController: UIViewController, UITextFieldDelegate {
     
     var salt:   String = ""
     var hashed: String = ""
+    
+    // Screen width.
+    public var screenWidth: CGFloat {
+        return UIScreen.main.bounds.width
+    }
+    
+    // Screen height.
+    public var screenHeight: CGFloat {
+        return UIScreen.main.bounds.height
+    }
     
     // MARK: Setup Haptic Feedback
     let hapticImpactLight  = UIImpactFeedbackGenerator(style: .light)
@@ -21,6 +32,8 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
     let hapticImpactHeavy  = UIImpactFeedbackGenerator(style: .heavy)
     let hapticSelection    = UISelectionFeedbackGenerator()
     let hapticNotification = UINotificationFeedbackGenerator()
+    
+    @IBOutlet weak var signNoteLb: FRHyperLabel!
     
     // MARK: Create Views
     let profileImgView: UIImageView = {
@@ -40,7 +53,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
         return view
     }()
     
-    let logInRegisterButton: UIButton = {
+    let signUpBtn: UIButton = {
         let button = UIButton(type: .system)
         button.backgroundColor = UIColor.InterfaceColor.black.withAlphaComponent(0.5)
         button.setTitle("R E G I S T E R", for: .normal)
@@ -48,10 +61,10 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
         button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 18)
         button.translatesAutoresizingMaskIntoConstraints = false
         button.layer.cornerRadius = 16
-        button.layer.masksToBounds = true
+//        button.layer.masksToBounds = true
         
         button.addTarget(self, action: #selector(handleTouchDown), for: .touchDown)
-        button.addTarget(self, action: #selector(handleRegister), for: .touchUpInside)
+        button.addTarget(self, action: #selector(handleSignUp), for: .touchUpInside)
         
         return button
     }()
@@ -59,23 +72,11 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
     @objc func handleTouchDown() {
         // Feedback
         hapticImpactLight.impactOccurred()
-        
-//        // Animation
-//        UIView.animate(withDuration: 0.1, animations: {
-//            self.logInRegisterButton.backgroundColor = self.logInRegisterButton.backgroundColor?.withAlphaComponent(0.5)
-//            self.logInRegisterButton.transform = CGAffineTransform(scaleX: 0.95, y: 0.98)
-//        })
     }
 
-    @objc func handleRegister() {
+    @objc func handleSignUp() {
         // Feedback
         hapticImpactLight.impactOccurred()
-        
-        //        // Animation
-        //        UIView.animate(withDuration: 0.13, animations: {
-        //            self.logInRegisterButton.backgroundColor = self.logInRegisterButton.backgroundColor?.withAlphaComponent(0.3)
-        //            self.logInRegisterButton.transform = CGAffineTransform(scaleX: 1.0, y: 1.0)
-        //        })
         
         // MARK: Registration
         if (inputInfoValidation()) {
@@ -121,6 +122,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
 //            let storyBoard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
 //            let newViewController = storyBoard.instantiateViewController(withIdentifier: "mainPageVC") as! ViewController
 //            self.present(newViewController, animated: true, completion: nil)
+            
         } else {
             // Validation
             print("Input Validation FAILED.\nPlease recheck your input and try again.")
@@ -128,19 +130,28 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
         
     }
     
-//    let nameTextField: UITextField = {
-//        let textField = UITextField()
-//        textField.placeholder = "Your Name"
-//        textField.translatesAutoresizingMaskIntoConstraints = false
-//        return textField
-//    }()
+    let signInBtn: UIButton = {
+        let button = UIButton(type: .system)
+        button.backgroundColor = UIColor.InterfaceColor.black.withAlphaComponent(0.5)
+        button.setTitle("SIGN IN", for: .normal)
+        button.setTitleColor(UIColor.white, for: .normal)
+        button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 18)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.layer.cornerRadius = 16
+//        button.layer.masksToBounds = true
+        
+        button.addTarget(self, action: #selector(handleTouchDown), for: .touchDown)
+        button.addTarget(self, action: #selector(handleSignIn), for: .touchUpInside)
+        
+        button.isHidden = true
+        
+        return button
+    }()
     
-//    let nameSeparatorView: UIView = {
-//        let view = UIView()
-//        view.backgroundColor = UIColor.InterfaceColor.lightGray
-//        view.translatesAutoresizingMaskIntoConstraints = false
-//        return view
-//    }()
+    @objc func handleSignIn() {
+        // MARK: - SignIn Process
+        
+    }
     
     let telTextField: UITextField = {
         let textField = UITextField()
@@ -201,15 +212,17 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        view.backgroundColor = UIColor.InterfaceColor.naviBlue
+        view.backgroundColor = UIColor.InterfaceColor.TianyiBlue
         
         view.addSubview(inputsContainerView)
-        view.addSubview(logInRegisterButton)
+        view.addSubview(signUpBtn)
         view.addSubview(profileImgView)
+        view.addSubview(signNoteLb)
         
         setupInputsContainerView()
         setupLogInRegisterButton()
         setupProfileImgView()
+        setupSignNoteLb()
         
 //        nameTextField.delegate      = self
         telTextField.delegate       = self
@@ -218,43 +231,20 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
         passwVeriTextField.delegate = self
         
         // Setup keyboardtype for each TF
-//        nameTextField.keyboardType  = .default
         telTextField.keyboardType   = .numberPad
         emailTextField.keyboardType = .emailAddress
         // Setup "return" key on keyboard for each TF
-//        nameTextField.returnKeyType  = UIReturnKeyType.next
         telTextField.returnKeyType   = UIReturnKeyType.next
         emailTextField.returnKeyType = UIReturnKeyType.next
         passwTextField.returnKeyType = UIReturnKeyType.next
         // Dismiss Keyboard using "return" key on keyboard.
         passwVeriTextField.returnKeyType = UIReturnKeyType.done // Last input TF should be here!!!
         
-        // MARK: Keyboard related
-//        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillChange(notification:)), name: UIResponder.keyboardWillShowNotification, object: nil)
-//        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillChange(notification:)), name: UIResponder.keyboardWillHideNotification, object: nil)
-//        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillChange(notification:)), name: UIResponder.keyboardWillChangeFrameNotification, object: nil)
-        // Enable Tap elsewhere to dismissKeyboard func
         let tapToDismissKeyboard = UITapGestureRecognizer(target: self, action:#selector(dismissKeyboard))
         tapToDismissKeyboard.cancelsTouchesInView = false
         view.addGestureRecognizer(tapToDismissKeyboard)
         
     }
-    
-//    deinit {
-//        // Stop listening to Keyboard events
-//        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillShowNotification, object: nil)
-//        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillHideNotification, object: nil)
-//        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillChangeFrameNotification, object: nil)
-//    }
-    
-//    @objc func keyboardWillChange(notification:  Notification) {
-//        if notification.name == UIResponder.keyboardWillShowNotification ||
-//            notification.name == UIResponder.keyboardWillChangeFrameNotification {
-//            inputsContainerView.frame.origin.y += -10
-//        } else {
-//            inputsContainerView.frame.origin.y += -10
-//        }
-//    }
     
     // MARK: - Functions
     // MARK: Registration info Encryption
@@ -307,20 +297,31 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
     func setupProfileImgView() {
         //Constraints
         profileImgView.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
-        profileImgView.bottomAnchor.constraint(equalTo: inputsContainerView.topAnchor, constant: -82).isActive = true
-        profileImgView.topAnchor.constraint(equalTo: inputsContainerView.topAnchor, constant: -118).isActive = true
+        if screenHeight == 568.0 && screenWidth == 320.0 {
+            // iPhone with 4 inch Screen
+            profileImgView.bottomAnchor.constraint(equalTo: inputsContainerView.topAnchor, constant: -56).isActive = true
+            profileImgView.topAnchor.constraint(equalTo: inputsContainerView.topAnchor, constant: -90).isActive = true
+        } else {
+            // iPhone with >= 4.7 inch Screen
+            profileImgView.bottomAnchor.constraint(equalTo: inputsContainerView.topAnchor, constant: -78).isActive = true
+            profileImgView.topAnchor.constraint(equalTo: inputsContainerView.topAnchor, constant: -114).isActive = true
+        }
     }
     
     func setupInputsContainerView() {
         //Constraints
-        inputsContainerView.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+        if screenHeight == 568.0 && screenWidth == 320.0 {
+            // iPhone with 4 inch Screen
+            inputsContainerView.widthAnchor.constraint(equalTo: view.widthAnchor, constant: -24).isActive = true
+        } else {
+            // iPhone with >= 4.7 inch Screen
+            inputsContainerView.widthAnchor.constraint(equalTo: view.widthAnchor, constant: -36).isActive = true
+        }
         inputsContainerView.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: -30).isActive = true
-        inputsContainerView.widthAnchor.constraint(equalTo: view.widthAnchor, constant: -36).isActive = true
+        inputsContainerView.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
         inputsContainerView.heightAnchor.constraint(equalToConstant: 200).isActive = true
         
         //Input Fields
-//        inputsContainerView.addSubview(nameTextField)
-//        inputsContainerView.addSubview(nameSeparatorView)
         inputsContainerView.addSubview(telTextField)
         inputsContainerView.addSubview(telSeparatorView)
         inputsContainerView.addSubview(emailTextField)
@@ -328,18 +329,6 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
         inputsContainerView.addSubview(passwTextField)
         inputsContainerView.addSubview(passwSeparatorView)
         inputsContainerView.addSubview(passwVeriTextField)
-        
-//        //Constraints for nameTextField
-//        nameTextField.leftAnchor.constraint(equalTo: inputsContainerView.leftAnchor, constant: 16).isActive = true
-//        nameTextField.topAnchor.constraint(equalTo: inputsContainerView.topAnchor).isActive = true
-//        nameTextField.widthAnchor.constraint(equalTo: inputsContainerView.widthAnchor, constant: -24).isActive = true
-//        nameTextField.heightAnchor.constraint(equalTo: inputsContainerView.heightAnchor, multiplier: 1/5).isActive = true
-//
-//        //Constraints for nameSeparatorView
-//        nameSeparatorView.leftAnchor.constraint(equalTo: inputsContainerView.leftAnchor, constant: 16).isActive = true
-//        nameSeparatorView.topAnchor.constraint(equalTo: nameTextField.bottomAnchor, constant: -1).isActive = true
-//        nameSeparatorView.widthAnchor.constraint(equalTo: inputsContainerView.widthAnchor, constant: -32).isActive = true
-//        nameSeparatorView.heightAnchor.constraint(equalToConstant: 1).isActive = true
         
         //Constraints for telTextField
         telTextField.leftAnchor.constraint(equalTo: inputsContainerView.leftAnchor, constant: 16).isActive = true
@@ -386,10 +375,44 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
     
     func setupLogInRegisterButton() {
         //Constraints
-        logInRegisterButton.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
-        logInRegisterButton.topAnchor.constraint(equalTo: inputsContainerView.bottomAnchor, constant: 68).isActive = true
-        logInRegisterButton.widthAnchor.constraint(equalTo: inputsContainerView.widthAnchor).isActive = true
-        logInRegisterButton.heightAnchor.constraint(equalToConstant: 52).isActive = true
+        if screenHeight == 568.0 && screenWidth == 320.0 {
+            // iPhone with 4 inch Screen
+            signUpBtn.topAnchor.constraint(equalTo: inputsContainerView.bottomAnchor, constant: 48).isActive = true
+            signUpBtn.heightAnchor.constraint(equalToConstant: 48).isActive = true
+        } else {
+            // iPhone with >= 4.7 inch Screen
+            signUpBtn.topAnchor.constraint(equalTo: inputsContainerView.bottomAnchor, constant: 68).isActive = true
+            signUpBtn.heightAnchor.constraint(equalToConstant: 52).isActive = true
+        }
+        signUpBtn.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+        signUpBtn.widthAnchor.constraint(equalTo: inputsContainerView.widthAnchor).isActive = true
+    }
+    
+    func setupSignNoteLb() {
+        let string = "Already have account? Sign in here!"
+        let attributes = [NSAttributedString.Key.foregroundColor: UIColor.black,
+                          NSAttributedString.Key.font: UIFont.preferredFont(forTextStyle: UIFont.TextStyle.headline)]
+        signNoteLb.attributedText = NSAttributedString(string: string, attributes: attributes)
+        let handler = {
+            (hyperLabel: FRHyperLabel!, substring: String!) -> Void in
+            self.setupSignInView()
+        }
+        signNoteLb.setLinksForSubstrings(["Sign in here!"], withLinkHandler: handler)
+    }
+    
+    // MARK: - Setup SignIn View
+    func  setupSignInView() {
+        self.view.isUserInteractionEnabled = false
+        UIView.animate(withDuration: 0.3, animations: {
+            self.inputsContainerView.alpha = 0
+        }, completion: { _ in
+            self.inputsContainerView.isHidden = true
+            // New inputContainerView
+            // Show signInBtn
+            // Change signNoteLb.text
+            self.view.isUserInteractionEnabled = true
+        })
+        
     }
     
     // MARK: - VC Settings
