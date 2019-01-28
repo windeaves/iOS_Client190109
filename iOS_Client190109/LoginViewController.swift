@@ -82,9 +82,10 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
         // MARK: Registration
         if (inputInfoValidation()) {
             // Disable User Interaction
-            view.isUserInteractionEnabled = false
+//            view.isUserInteractionEnabled = false
             
             let register1Request = KeyCenter.Register1Url + telTextField.text!
+            print(register1Request)
             Alamofire.request(register1Request)
                 .responseJSON { response in
 //                    debugPrint(response)
@@ -101,7 +102,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
                     // MARK: Get salt from response
                     if let result = response.result.value {
                         let responseJSON = result as! NSDictionary
-//                        print(responseJSON)
+                        print(responseJSON)
                         guard let content = responseJSON["content"] as? [String: Any],
                             let salt = content["salt"] as? String else {
                                 print("Parsing JSON FAILED")
@@ -111,10 +112,11 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
                         print("salt from Server: \(self.salt)")
                         self.hashSaltAndPassw()
                         let register2Part1 = KeyCenter.Register2Url + "?tel=" + self.telTextField.text!
-                        let register2Request = register2Part1 + "mail=" + self.emailTextField.text! + "passsalt=" + self.hashed
+                        let register2Request = register2Part1 + "&mail=" + self.emailTextField.text! + "&passsalt=" + self.hashed
                         print(register2Request)
-                        Alamofire.request(register2Request).response { response in
-                            debugPrint(response)
+                        Alamofire.request(register2Request)
+                            .responseJSON { response2 in
+                                print(response2)
                         }
                     }
             }
